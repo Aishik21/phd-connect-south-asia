@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Separator } from '@/components/ui/separator';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -18,8 +19,10 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email.trim() || !password.trim()) {
@@ -33,15 +36,18 @@ const LoginPage = () => {
     
     setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: 'Login Successful',
-        description: 'Welcome back to PhD Connect!',
-      });
+    try {
+      const { error } = await signIn(email, password);
+      
+      if (error) throw error;
+      
+      // Successful login will redirect via the AuthGuard
+    } catch (error) {
+      console.error('Login error:', error);
+      // Error is already handled in signIn
+    } finally {
       setLoading(false);
-      // In a real app, you would redirect to the dashboard or home page
-    }, 1500);
+    }
   };
 
   return (

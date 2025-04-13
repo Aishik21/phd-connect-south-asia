@@ -1,16 +1,31 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { GraduationCap, Menu, X, User, Search, Star } from 'lucide-react';
+import { GraduationCap, Menu, X, User, Search, Star, LogOut } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   return (
@@ -45,12 +60,42 @@ const Navbar = () => {
 
           <div className="flex items-center">
             <div className="hidden md:flex space-x-2">
-              <Button variant="outline" asChild>
-                <Link to="/login">Log in</Link>
-              </Button>
-              <Button className="bg-academic-600 hover:bg-academic-700" asChild>
-                <Link to="/signup">Sign up</Link>
-              </Button>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span>My Account</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="px-2 py-1.5">
+                      <p className="text-sm font-medium">{user.email}</p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="cursor-pointer">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/favorites" className="cursor-pointer">Saved Professors</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-red-500">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <Button variant="outline" asChild>
+                    <Link to="/login">Log in</Link>
+                  </Button>
+                  <Button className="bg-academic-600 hover:bg-academic-700" asChild>
+                    <Link to="/signup">Sign up</Link>
+                  </Button>
+                </>
+              )}
             </div>
             
             {/* Mobile menu button */}
@@ -98,20 +143,58 @@ const Navbar = () => {
             >
               About
             </Link>
-            <div className="pt-4 flex flex-col space-y-2">
-              <Button variant="outline" asChild className="w-full justify-start">
-                <Link to="/login" onClick={toggleMenu}>
-                  <User className="h-4 w-4 mr-2" />
-                  Log in
+            
+            {user ? (
+              <>
+                <Link
+                  to="/profile"
+                  onClick={toggleMenu}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-academic-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  <div className="flex items-center">
+                    <User className="h-4 w-4 mr-2" />
+                    My Profile
+                  </div>
                 </Link>
-              </Button>
-              <Button className="bg-academic-600 hover:bg-academic-700 w-full justify-start" asChild>
-                <Link to="/signup" onClick={toggleMenu}>
-                  <GraduationCap className="h-4 w-4 mr-2" />
-                  Sign up
+                <Link
+                  to="/favorites"
+                  onClick={toggleMenu}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-academic-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  <div className="flex items-center">
+                    <Star className="h-4 w-4 mr-2" />
+                    Saved Professors
+                  </div>
                 </Link>
-              </Button>
-            </div>
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    toggleMenu();
+                  }}
+                  className="block w-full px-3 py-2 rounded-md text-base font-medium text-red-500 hover:bg-gray-50 dark:hover:bg-gray-700 text-left"
+                >
+                  <div className="flex items-center">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign out
+                  </div>
+                </button>
+              </>
+            ) : (
+              <div className="pt-4 flex flex-col space-y-2">
+                <Button variant="outline" asChild className="w-full justify-start">
+                  <Link to="/login" onClick={toggleMenu}>
+                    <User className="h-4 w-4 mr-2" />
+                    Log in
+                  </Link>
+                </Button>
+                <Button className="bg-academic-600 hover:bg-academic-700 w-full justify-start" asChild>
+                  <Link to="/signup" onClick={toggleMenu}>
+                    <GraduationCap className="h-4 w-4 mr-2" />
+                    Sign up
+                  </Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}

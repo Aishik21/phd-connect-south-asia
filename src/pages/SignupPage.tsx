@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -12,6 +12,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SignupPage = () => {
   const [name, setName] = useState('');
@@ -24,8 +25,10 @@ const SignupPage = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email.trim() || !password.trim() || !name.trim() || !confirmPassword.trim()) {
@@ -57,15 +60,32 @@ const SignupPage = () => {
     
     setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const userData = {
+        name,
+        university,
+        department,
+        research_interests: research ? research.split(',').map(item => item.trim()) : []
+      };
+
+      const { error } = await signUp(email, password, userData);
+      
+      if (error) throw error;
+      
       toast({
-        title: 'Account Created',
-        description: 'Welcome to PhD Connect! You can now log in with your credentials.',
+        title: 'Success',
+        description: 'Your account has been created! Please check your email to confirm your registration.',
       });
+      
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } catch (error) {
+      console.error('Signup error:', error);
+      // Error is already handled in signUp
+    } finally {
       setLoading(false);
-      // In a real app, you would redirect to the login page or onboarding
-    }, 1500);
+    }
   };
 
   return (

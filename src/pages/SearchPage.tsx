@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SearchFilters from '@/components/SearchFilters';
 import SearchResults from '@/components/SearchResults';
 import { Professor } from '@/components/ProfessorCard';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const SearchPage = () => {
   const [loading, setLoading] = useState(false);
@@ -175,25 +174,6 @@ const SearchPage = () => {
     }, 1000);
   };
 
-  const handleExportResults = () => {
-    // In a real app, generate CSV or JSON and download it
-    const jsonString = JSON.stringify(results, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'professor_search_results.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    toast({
-      title: "Export Complete",
-      description: `Exported ${results.length} professor records as JSON.`,
-    });
-  };
-
   return (
     <div>
       <Navbar />
@@ -214,7 +194,6 @@ const SearchPage = () => {
           <SearchResults 
             results={results} 
             loading={loading}
-            exportResults={handleExportResults}
           />
         )}
         

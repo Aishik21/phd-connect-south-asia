@@ -73,7 +73,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  // Get departments based on selected country (in a real app, this would be from API)
+  // Get departments based on selected country
   const getDepartments = () => {
     return [
       { value: "computer-science", label: "Computer Science" },
@@ -87,7 +87,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
     ];
   };
 
-  // Get universities based on selected country and department (in a real app, this would be from API)
+  // Get universities based on selected country and department
   const getUniversities = () => {
     if (country === 'india') {
       return [
@@ -171,7 +171,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                   <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Countries</SelectItem>
+                  <SelectItem value="all-countries">All Countries</SelectItem>
                   <SelectItem value="india">India</SelectItem>
                   <SelectItem value="usa">United States</SelectItem>
                   <SelectItem value="uk">United Kingdom</SelectItem>
@@ -197,7 +197,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                   <SelectValue placeholder="All Departments" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Departments</SelectItem>
+                  <SelectItem value="all-departments">All Departments</SelectItem>
                   {getDepartments().map(dept => (
                     <SelectItem key={dept.value} value={dept.value}>{dept.label}</SelectItem>
                   ))}
@@ -212,7 +212,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                   <SelectValue placeholder="All Universities" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Universities</SelectItem>
+                  <SelectItem value="all-universities">All Universities</SelectItem>
                   {getUniversities().map(univ => (
                     <SelectItem key={univ.value} value={univ.value}>{univ.label}</SelectItem>
                   ))}
@@ -243,7 +243,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                         <SelectValue placeholder="Any rating" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Any rating</SelectItem>
+                        <SelectItem value="any">Any rating</SelectItem>
                         <SelectItem value="5">5 Stars</SelectItem>
                         <SelectItem value="4">4+ Stars</SelectItem>
                         <SelectItem value="3">3+ Stars</SelectItem>

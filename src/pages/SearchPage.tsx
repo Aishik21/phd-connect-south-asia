@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SearchFilters from '@/components/SearchFilters';
 import SearchResults from '@/components/SearchResults';
-import { Professor } from '@/components/ProfessorCard';
+import { Professor } from '@/lib/types';  // Updated import path
 import { useToast } from '@/hooks/use-toast';
 
 const SearchPage = () => {
@@ -135,19 +136,19 @@ const SearchPage = () => {
         );
       }
       
-      if (filters.department) {
+      if (filters.department && filters.department !== 'all-departments') {
         filteredResults = filteredResults.filter(
-          prof => prof.department.toLowerCase().includes(filters.department.toLowerCase())
+          prof => prof.department.toLowerCase().includes(filters.department.replace('-', ' ').toLowerCase())
         );
       }
       
-      if (filters.university) {
+      if (filters.university && filters.university !== 'all-universities') {
         filteredResults = filteredResults.filter(
           prof => prof.university.toLowerCase().includes(filters.university.replace('-', ' ').toLowerCase())
         );
       }
       
-      if (filters.country) {
+      if (filters.country && filters.country !== 'all-countries') {
         filteredResults = filteredResults.filter(
           prof => prof.country?.toLowerCase().includes(filters.country.replace('-', ' ').toLowerCase())
         );
@@ -162,7 +163,7 @@ const SearchPage = () => {
         );
       }
       
-      if (filters.rating) {
+      if (filters.rating && filters.rating !== 'any') {
         const minRating = parseInt(filters.rating);
         filteredResults = filteredResults.filter(
           prof => prof.rating >= minRating

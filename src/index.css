@@ -5,83 +5,83 @@
 
 @layer base {
   :root {
-    --background: 250 30% 98%;
-    --foreground: 260 25% 15%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 260 25% 15%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 260 25% 15%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 260 70% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 222 47% 31%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 270 30% 90%;
-    --secondary-foreground: 260 25% 25%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 260 30% 95%;
-    --muted-foreground: 260 10% 40%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 250 40% 90%;
-    --accent-foreground: 260 25% 25%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 260 20% 90%;
-    --input: 260 20% 90%;
-    --ring: 260 70% 50%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 47% 31%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 260 25% 15%;
-    --sidebar-foreground: 260 20% 95%;
-    --sidebar-primary: 260 70% 50%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 222 47% 31%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 20% 20%;
-    --sidebar-accent-foreground: 260 20% 95%;
-    --sidebar-border: 260 20% 25%;
-    --sidebar-ring: 260 70% 50%;
+    --sidebar-accent: 222 47% 16%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 222 47% 25%;
+    --sidebar-ring: 222 47% 31%;
   }
 
   .dark {
-    --background: 260 25% 10%;
-    --foreground: 260 20% 95%;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-    --card: 260 25% 12%;
-    --card-foreground: 260 20% 95%;
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 260 25% 12%;
-    --popover-foreground: 260 20% 95%;
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 260 70% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 210 40% 60%;
+    --primary-foreground: 222 47% 11%;
 
-    --secondary: 260 30% 20%;
-    --secondary-foreground: 260 20% 95%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 260 30% 20%;
-    --muted-foreground: 260 20% 70%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 260 30% 20%;
-    --accent-foreground: 260 20% 95%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 260 20% 95%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 260 20% 30%;
-    --input: 260 20% 30%;
-    --ring: 260 70% 50%;
+    --border: 217 33% 25%;
+    --input: 217 33% 25%;
+    --ring: 210 40% 60%;
 
-    --sidebar-background: 260 25% 15%;
-    --sidebar-foreground: 260 20% 95%;
-    --sidebar-primary: 260 70% 50%;
+    --sidebar-background: 222 47% 15%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 20% 20%;
-    --sidebar-accent-foreground: 260 20% 95%;
-    --sidebar-border: 260 20% 25%;
-    --sidebar-ring: 260 70% 50%;
+    --sidebar-accent: 222 47% 20%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 222 47% 25%;
+    --sidebar-ring: 210 40% 60%;
   }
 }
 
@@ -96,7 +96,7 @@
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, hsl(260, 70%, 50%), hsl(280, 70%, 40%));
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/0.8));
 }
 
 .card-hover {
@@ -106,4 +106,23 @@
 .card-hover:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.professor-card {
+  transition: all 0.2s ease;
+}
+
+.professor-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary)/0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }

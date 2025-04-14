@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -17,8 +17,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Search, Filter, X } from 'lucide-react';
+import { Search, Filter, X, SlidersHorizontal } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Badge } from '@/components/ui/badge';
 
 type SearchFiltersProps = {
   onSearch: (filters: any) => void;
@@ -32,8 +33,20 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
   const [country, setCountry] = useState('');
   const [rating, setRating] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState(0);
   
   const isMobile = useIsMobile();
+
+  // Track active filters count
+  useEffect(() => {
+    let count = 0;
+    if (department) count++;
+    if (university) count++;
+    if (country) count++;
+    if (researchArea) count++;
+    if (rating) count++;
+    setActiveFilters(count);
+  }, [department, university, country, researchArea, rating]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +73,53 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
     setIsFilterOpen(!isFilterOpen);
   };
 
+  // Get departments based on selected country (in a real app, this would be from API)
+  const getDepartments = () => {
+    return [
+      { value: "computer-science", label: "Computer Science" },
+      { value: "electrical-engineering", label: "Electrical Engineering" },
+      { value: "mechanical-engineering", label: "Mechanical Engineering" },
+      { value: "civil-engineering", label: "Civil Engineering" },
+      { value: "physics", label: "Physics" },
+      { value: "mathematics", label: "Mathematics" },
+      { value: "chemistry", label: "Chemistry" },
+      { value: "biology", label: "Biology" }
+    ];
+  };
+
+  // Get universities based on selected country and department (in a real app, this would be from API)
+  const getUniversities = () => {
+    if (country === 'india') {
+      return [
+        { value: "iit-delhi", label: "IIT Delhi" },
+        { value: "iit-bombay", label: "IIT Bombay" },
+        { value: "iit-madras", label: "IIT Madras" },
+        { value: "iit-kanpur", label: "IIT Kanpur" },
+        { value: "iit-kharagpur", label: "IIT Kharagpur" },
+        { value: "iisc-bangalore", label: "IISc Bangalore" }
+      ];
+    } else if (country === 'usa') {
+      return [
+        { value: "mit", label: "MIT" },
+        { value: "stanford", label: "Stanford University" },
+        { value: "harvard", label: "Harvard University" },
+        { value: "tamu", label: "Texas A&M University" },
+        { value: "caltech", label: "Caltech" }
+      ];
+    } else {
+      return [
+        { value: "iit-delhi", label: "IIT Delhi" },
+        { value: "iit-bombay", label: "IIT Bombay" },
+        { value: "iit-madras", label: "IIT Madras" },
+        { value: "mit", label: "MIT" },
+        { value: "stanford", label: "Stanford University" },
+        { value: "oxford", label: "University of Oxford" },
+        { value: "cambridge", label: "University of Cambridge" },
+        { value: "tamu", label: "Texas A&M University" }
+      ];
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-8">
       <form onSubmit={handleSubmit}>
@@ -70,7 +130,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
               placeholder="Search by name, research topic, or keyword..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              className="pl-10 pr-4 py-2"
+              className="pl-10 pr-16 py-2"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             
@@ -82,7 +142,16 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                 onClick={toggleFilters}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2"
               >
-                <Filter className="h-4 w-4" />
+                <div className="relative">
+                  <SlidersHorizontal className="h-4 w-4" />
+                  {activeFilters > 0 && (
+                    <Badge 
+                      className="absolute -top-2 -right-2 h-4 w-4 p-0 flex items-center justify-center text-[10px] bg-academic-600"
+                    >
+                      {activeFilters}
+                    </Badge>
+                  )}
+                </div>
               </Button>
             )}
           </div>
@@ -91,20 +160,47 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
         <div className={`${isMobile ? (isFilterOpen ? 'block' : 'hidden') : 'block'}`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <Label htmlFor="department">Department</Label>
-              <Select value={department} onValueChange={setDepartment}>
-                <SelectTrigger id="department">
-                  <SelectValue placeholder="Select department" />
+              <Label htmlFor="country">Country</Label>
+              <Select value={country} onValueChange={(value) => {
+                setCountry(value);
+                // Reset dependent filters
+                setDepartment('');
+                setUniversity('');
+              }}>
+                <SelectTrigger id="country">
+                  <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="computer-science">Computer Science</SelectItem>
-                  <SelectItem value="electrical-engineering">Electrical Engineering</SelectItem>
-                  <SelectItem value="mechanical-engineering">Mechanical Engineering</SelectItem>
-                  <SelectItem value="civil-engineering">Civil Engineering</SelectItem>
-                  <SelectItem value="physics">Physics</SelectItem>
-                  <SelectItem value="mathematics">Mathematics</SelectItem>
-                  <SelectItem value="chemistry">Chemistry</SelectItem>
-                  <SelectItem value="biology">Biology</SelectItem>
+                  <SelectItem value="">All Countries</SelectItem>
+                  <SelectItem value="india">India</SelectItem>
+                  <SelectItem value="usa">United States</SelectItem>
+                  <SelectItem value="uk">United Kingdom</SelectItem>
+                  <SelectItem value="canada">Canada</SelectItem>
+                  <SelectItem value="australia">Australia</SelectItem>
+                  <SelectItem value="germany">Germany</SelectItem>
+                  <SelectItem value="france">France</SelectItem>
+                  <SelectItem value="japan">Japan</SelectItem>
+                  <SelectItem value="china">China</SelectItem>
+                  <SelectItem value="singapore">Singapore</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="department">Department</Label>
+              <Select value={department} onValueChange={(value) => {
+                setDepartment(value);
+                // Reset university if department changes
+                setUniversity('');
+              }}>
+                <SelectTrigger id="department">
+                  <SelectValue placeholder="All Departments" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All Departments</SelectItem>
+                  {getDepartments().map(dept => (
+                    <SelectItem key={dept.value} value={dept.value}>{dept.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -113,34 +209,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
               <Label htmlFor="university">University</Label>
               <Select value={university} onValueChange={setUniversity}>
                 <SelectTrigger id="university">
-                  <SelectValue placeholder="Select university" />
+                  <SelectValue placeholder="All Universities" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="iit-delhi">IIT Delhi</SelectItem>
-                  <SelectItem value="iit-bombay">IIT Bombay</SelectItem>
-                  <SelectItem value="iit-madras">IIT Madras</SelectItem>
-                  <SelectItem value="iit-kanpur">IIT Kanpur</SelectItem>
-                  <SelectItem value="iit-kharagpur">IIT Kharagpur</SelectItem>
-                  <SelectItem value="iisc-bangalore">IISc Bangalore</SelectItem>
-                  <SelectItem value="tamu">Texas A&M University</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="country">Country</Label>
-              <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger id="country">
-                  <SelectValue placeholder="Select country" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="india">India</SelectItem>
-                  <SelectItem value="pakistan">Pakistan</SelectItem>
-                  <SelectItem value="bangladesh">Bangladesh</SelectItem>
-                  <SelectItem value="sri-lanka">Sri Lanka</SelectItem>
-                  <SelectItem value="nepal">Nepal</SelectItem>
-                  <SelectItem value="bhutan">Bhutan</SelectItem>
-                  <SelectItem value="usa">United States</SelectItem>
+                  <SelectItem value="">All Universities</SelectItem>
+                  {getUniversities().map(univ => (
+                    <SelectItem key={univ.value} value={univ.value}>{univ.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -168,6 +243,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                         <SelectValue placeholder="Any rating" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="">Any rating</SelectItem>
                         <SelectItem value="5">5 Stars</SelectItem>
                         <SelectItem value="4">4+ Stars</SelectItem>
                         <SelectItem value="3">3+ Stars</SelectItem>
@@ -192,7 +268,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
             <X className="h-4 w-4 mr-1" />
             Clear
           </Button>
-          <Button type="submit" className="bg-academic-600 hover:bg-academic-700">
+          <Button type="submit" className="bg-primary hover:bg-primary/90">
             <Search className="h-4 w-4 mr-1" />
             Search
           </Button>

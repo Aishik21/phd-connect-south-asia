@@ -12,17 +12,19 @@ import {
   MapPin, 
   ExternalLink, 
   Star, 
-  ThumbsUp, 
   MessageSquare,
   Book,
-  Edit,
-  Award,
   GraduationCap,
-  FileText
+  Award,
+  FileText,
+  Calendar,
+  Clock,
+  Share2
 } from 'lucide-react';
 import { Professor } from './ProfessorCard';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 type ProfessorDetailProps = {
   professor: Professor & {
@@ -76,258 +78,305 @@ const ProfessorDetail: React.FC<ProfessorDetailProps> = ({ professor }) => {
     setSelectedRating(0);
   };
 
-  const handleContactClick = () => {
-    // Logic to initiate email template or contact flow
-    toast({
-      title: "Contact Form",
-      description: "Email template feature will be available soon.",
-    });
-  };
-
   return (
-    <div className="max-w-4xl mx-auto">
-      <Card className="mb-8">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/3 flex justify-center mb-6 md:mb-0">
-              {professor.imageUrl ? (
-                <div className="h-48 w-48 rounded-full overflow-hidden border-4 border-academic-100">
-                  <img 
-                    src={professor.imageUrl} 
-                    alt={professor.name} 
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="h-48 w-48 rounded-full overflow-hidden bg-academic-100 flex items-center justify-center">
-                  <User className="h-24 w-24 text-academic-600" />
-                </div>
-              )}
-            </div>
-            
-            <div className="md:w-2/3 md:pl-6">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">{professor.name}</h1>
-              
-              <div className="flex items-center mb-2">
-                <GraduationCap className="h-5 w-5 text-academic-600 mr-2" />
-                <span className="text-gray-700 dark:text-gray-300">{professor.department}</span>
-              </div>
-              
-              <div className="flex items-center mb-2">
-                <Award className="h-5 w-5 text-academic-600 mr-2" />
-                <span className="text-gray-700 dark:text-gray-300">{professor.university}</span>
-              </div>
-              
-              {professor.country && (
-                <div className="flex items-center mb-2">
-                  <MapPin className="h-5 w-5 text-academic-600 mr-2" />
-                  <span className="text-gray-700 dark:text-gray-300">{professor.country}</span>
-                </div>
-              )}
-              
-              <div className="flex items-center mb-4">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-5 w-5 ${
-                        i < professor.rating
-                          ? 'text-yellow-400 fill-yellow-400'
-                          : 'text-gray-300 dark:text-gray-600'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="ml-2 text-gray-600 dark:text-gray-400">
-                  {professor.rating.toFixed(1)} ({professor.reviewCount} {professor.reviewCount === 1 ? 'review' : 'reviews'})
-                </span>
-              </div>
-              
-              <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Research Interests</h3>
-                <div className="flex flex-wrap gap-2">
-                  {professor.researchInterests.map((interest, index) => (
-                    <Badge key={index} variant="secondary">
-                      {interest}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={handleContactClick} className="bg-academic-600 hover:bg-academic-700">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Contact Professor
-                </Button>
-                
-                {professor.website && (
-                  <Button variant="outline" asChild>
-                    <a href={professor.website} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Visit Website
-                    </a>
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Tabs defaultValue="contact" className="mb-8">
-        <TabsList className="grid grid-cols-3">
-          <TabsTrigger value="contact">Contact Info</TabsTrigger>
-          <TabsTrigger value="publications">Publications</TabsTrigger>
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="contact" className="p-4 bg-white dark:bg-gray-800 rounded-md shadow">
-          <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
-          
-          <div className="space-y-4">
-            <div className="flex items-start">
-              <Mail className="h-5 w-5 text-academic-600 mr-3 mt-0.5" />
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</h3>
-                <p className="text-gray-900 dark:text-white">{professor.email}</p>
-              </div>
-            </div>
-            
-            {professor.phone && (
-              <div className="flex items-start">
-                <Phone className="h-5 w-5 text-academic-600 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Phone</h3>
-                  <p className="text-gray-900 dark:text-white">{professor.phone}</p>
-                </div>
-              </div>
-            )}
-            
-            {professor.office && (
-              <div className="flex items-start">
-                <MapPin className="h-5 w-5 text-academic-600 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Office</h3>
-                  <p className="text-gray-900 dark:text-white">{professor.office}</p>
-                </div>
-              </div>
-            )}
-            
-            {professor.website && (
-              <div className="flex items-start">
-                <ExternalLink className="h-5 w-5 text-academic-600 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Website</h3>
-                  <a href={professor.website} target="_blank" rel="noopener noreferrer" className="text-academic-600 hover:underline break-all">
-                    {professor.website}
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="publications" className="p-4 bg-white dark:bg-gray-800 rounded-md shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Publications</h2>
-            {professor.publications && professor.publications.length > 0 && (
-              <Button variant="outline" size="sm">
-                <FileText className="h-4 w-4 mr-2" />
-                Export
-              </Button>
-            )}
-          </div>
-          
-          {professor.publications && professor.publications.length > 0 ? (
-            <ul className="space-y-3">
-              {professor.publications.map((publication, index) => (
-                <li key={index} className="flex">
-                  <Book className="h-5 w-5 text-academic-600 mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-800 dark:text-gray-200">{publication}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-600 dark:text-gray-400">No publications available.</p>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="reviews" className="p-4 bg-white dark:bg-gray-800 rounded-md shadow">
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Student Reviews</h2>
-            
-            {professor.reviews && professor.reviews.length > 0 ? (
-              <div className="space-y-4">
-                {professor.reviews.map((review) => (
-                  <div key={review.id} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center">
-                        <User className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
-                        <span className="font-medium text-gray-900 dark:text-white">{review.user}</span>
-                      </div>
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < review.rating
-                                ? 'text-yellow-400 fill-yellow-400'
-                                : 'text-gray-300 dark:text-gray-600'
-                            }`}
-                          />
-                        ))}
-                        <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">{review.date}</span>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 dark:text-gray-300">{review.comment}</p>
-                  </div>
-                ))}
+    <div className="p-6">
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="md:w-1/3">
+          <div className="sticky top-24">
+            {professor.imageUrl ? (
+              <div className="rounded-xl overflow-hidden border-4 border-academic-100 shadow-xl mb-6 aspect-square">
+                <img 
+                  src={professor.imageUrl} 
+                  alt={professor.name} 
+                  className="h-full w-full object-cover"
+                />
               </div>
             ) : (
-              <p className="text-gray-600 dark:text-gray-400 mb-4">No reviews yet. Be the first to leave a review!</p>
+              <div className="rounded-xl overflow-hidden bg-gradient-to-br from-academic-100 to-academic-200 flex items-center justify-center mb-6 aspect-square shadow-xl">
+                <User className="h-24 w-24 text-academic-600" />
+              </div>
             )}
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-3">Leave a Review</h3>
-            <form onSubmit={handleReviewSubmit}>
-              <div className="mb-4">
-                <div className="flex items-center mb-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Rating:</label>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Rating</h3>
+                <div className="flex items-center">
                   <div className="flex">
-                    {[1, 2, 3, 4, 5].map((rating) => (
+                    {[...Array(5)].map((_, i) => (
                       <Star
-                        key={rating}
-                        className={`h-6 w-6 cursor-pointer ${
-                          (hoverRating || selectedRating) >= rating
+                        key={i}
+                        className={`h-5 w-5 ${
+                          i < professor.rating
                             ? 'text-yellow-400 fill-yellow-400'
                             : 'text-gray-300 dark:text-gray-600'
                         }`}
-                        onClick={() => setSelectedRating(rating)}
-                        onMouseEnter={() => setHoverRating(rating)}
-                        onMouseLeave={() => setHoverRating(0)}
                       />
                     ))}
                   </div>
+                  <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {professor.rating.toFixed(1)}
+                  </span>
                 </div>
-                
-                <Textarea
-                  placeholder="Share your experience with this professor..."
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                  rows={4}
-                  className="resize-none"
-                />
               </div>
               
-              <Button type="submit" className="bg-academic-600 hover:bg-academic-700">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Submit Review
-              </Button>
-            </form>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Reviews</h3>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {professor.reviewCount}
+                </span>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Contact Information</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 text-academic-600 mr-2" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{professor.email}</span>
+                  </div>
+                  
+                  {professor.phone && (
+                    <div className="flex items-center">
+                      <Phone className="h-4 w-4 text-academic-600 mr-2" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{professor.phone}</span>
+                    </div>
+                  )}
+                  
+                  {professor.office && (
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 text-academic-600 mr-2" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{professor.office}</span>
+                    </div>
+                  )}
+                  
+                  {professor.website && (
+                    <div className="flex items-center">
+                      <ExternalLink className="h-4 w-4 text-academic-600 mr-2" />
+                      <a href={professor.website} target="_blank" rel="noopener noreferrer" 
+                        className="text-sm text-academic-600 hover:underline truncate max-w-[200px]">
+                        {professor.website.replace(/^https?:\/\//, '')}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="pt-4">
+                <Button variant="outline" className="w-full">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Schedule Meeting
+                </Button>
+              </div>
+            </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+        
+        <div className="md:w-2/3">
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{professor.name}</h1>
+              
+              <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <GraduationCap className="h-4 w-4 text-academic-600 mr-1" />
+                  <span className="text-sm">{professor.department}</span>
+                </div>
+                
+                <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <Award className="h-4 w-4 text-academic-600 mr-1" />
+                  <span className="text-sm">{professor.university}</span>
+                </div>
+                
+                {professor.country && (
+                  <div className="flex items-center text-gray-600 dark:text-gray-300">
+                    <MapPin className="h-4 w-4 text-academic-600 mr-1" />
+                    <span className="text-sm">{professor.country}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Research Interests</h2>
+              <div className="flex flex-wrap gap-2">
+                {professor.researchInterests.map((interest, index) => (
+                  <Badge key={index} variant="outline" className="bg-academic-50 text-academic-700 hover:bg-academic-100 transition-colors">
+                    {interest}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            
+            <Tabs defaultValue="bio" className="w-full">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="bio" className="text-sm">Biography</TabsTrigger>
+                <TabsTrigger value="publications" className="text-sm">Publications</TabsTrigger>
+                <TabsTrigger value="reviews" className="text-sm">Reviews</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="bio" className="space-y-4">
+                <div className="prose dark:prose-invert max-w-none">
+                  <p>
+                    Professor {professor.name} is a distinguished academic in the field of {professor.department} 
+                    at {professor.university}. With expertise in {professor.researchInterests.join(', ')}, 
+                    their research has contributed significantly to advancements in these areas.
+                  </p>
+                  <p>
+                    Their work focuses on innovative approaches to solve complex problems in 
+                    {professor.researchInterests[0]} and related fields. Students interested in these 
+                    research areas are encouraged to reach out directly through the contact information provided.
+                  </p>
+                </div>
+                
+                <div className="bg-academic-50 dark:bg-gray-700/30 rounded-lg p-4 mt-4">
+                  <h3 className="text-sm font-medium text-academic-700 dark:text-academic-300 flex items-center mb-2">
+                    <Clock className="h-4 w-4 mr-2" />
+                    Office Hours
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Monday & Wednesday: 2:00 PM - 4:00 PM<br />
+                    Or by appointment
+                  </p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="publications" className="space-y-4">
+                {professor.publications && professor.publications.length > 0 ? (
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">Recent Publications</h3>
+                      <Button variant="outline" size="sm">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Export All
+                      </Button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {professor.publications.map((publication, index) => (
+                        <div key={index} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
+                          <div className="flex items-start">
+                            <Book className="h-5 w-5 text-academic-600 mr-3 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-gray-800 dark:text-gray-200 font-medium">{publication}</p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                Published in Journal of {professor.department}, 2024
+                              </p>
+                              <div className="flex items-center mt-2">
+                                <Button variant="ghost" size="sm" className="h-8 text-academic-600 hover:text-academic-700 hover:bg-academic-50 dark:hover:bg-gray-700 px-2">
+                                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                                  View Paper
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 text-academic-600 hover:text-academic-700 hover:bg-academic-50 dark:hover:bg-gray-700 px-2">
+                                  <Share2 className="h-3.5 w-3.5 mr-1" />
+                                  Share
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Book className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No Publications Available</h3>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      Publications for this professor have not been added yet.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="reviews">
+                <div className="space-y-6">
+                  {professor.reviews && professor.reviews.length > 0 ? (
+                    <div className="space-y-4">
+                      {professor.reviews.map((review) => (
+                        <div key={review.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center">
+                              <div className="h-10 w-10 rounded-full bg-academic-100 flex items-center justify-center mr-3">
+                                <User className="h-5 w-5 text-academic-600" />
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-gray-900 dark:text-white">{review.user}</h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{review.date}</p>
+                              </div>
+                            </div>
+                            <div className="flex">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-4 w-4 ${
+                                    i < review.rating
+                                      ? 'text-yellow-400 fill-yellow-400'
+                                      : 'text-gray-300 dark:text-gray-600'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-gray-700 dark:text-gray-300 text-sm mt-2">{review.comment}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <MessageSquare className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No Reviews Yet</h3>
+                      <p className="text-gray-500 dark:text-gray-400 mb-4">
+                        Be the first to leave a review for this professor!
+                      </p>
+                    </div>
+                  )}
+                  
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 mt-6">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Write a Review</h3>
+                    <form onSubmit={handleReviewSubmit}>
+                      <div className="mb-4">
+                        <div className="flex items-center mb-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Your Rating:</label>
+                          <div className="flex">
+                            {[1, 2, 3, 4, 5].map((rating) => (
+                              <Star
+                                key={rating}
+                                className={cn(
+                                  "h-6 w-6 cursor-pointer transition-colors", 
+                                  (hoverRating || selectedRating) >= rating
+                                    ? "text-yellow-400 fill-yellow-400"
+                                    : "text-gray-300 dark:text-gray-600"
+                                )}
+                                onClick={() => setSelectedRating(rating)}
+                                onMouseEnter={() => setHoverRating(rating)}
+                                onMouseLeave={() => setHoverRating(0)}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <Textarea
+                          placeholder="Share your experience with this professor..."
+                          value={reviewText}
+                          onChange={(e) => setReviewText(e.target.value)}
+                          rows={4}
+                          className="resize-none bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      
+                      <Button type="submit" className="bg-academic-600 hover:bg-academic-700 transition-colors">
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Submit Review
+                      </Button>
+                    </form>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
